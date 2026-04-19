@@ -49,13 +49,13 @@ for i in returns.columns:
 # print(type(returns))
 # print(returns.shape)
 # print(returns.iloc[:, 0], returns.iloc[:, 1])
-print("-"*10, returns, "-"*10, sep='\n')
+print("-"*10, "RETURNS", returns, "-"*10, sep='\n')
 # print(returns.iloc[:, 0])
 
-print("*"*10, "Standard Deviation:", returns.std(), "*"*10, sep='\n')
-print(type(returns.std()))
+# print("*"*10, "Standard Deviation:", returns.std(), "*"*10, sep='\n')
+# print(type(returns.std()))
 
-## Manual std deviation
+## Manual std deviation of returns. Which is the same as volatility.
 avg_ret_apple = avg_returns.iloc[0]
 avg_ret_amz = avg_returns.iloc[1]
 averages = [avg_ret_apple, avg_ret_amz]
@@ -74,7 +74,21 @@ for i in returns.columns:
     std_man = math.sqrt(sum(deviations)/(len(deviations) - 1))
     my_std.append(round(std_man, 6))
     deviations = []
-    print(f"Manual std deviation for {i}: ", round(std_man, 6))
+    # print(f"Manual std deviation for {i}: ", round(std_man, 6))
 
-print("My std deviations: ", my_std, "\n", "Pandas std deviations: ", returns.std().values)
+# print("My std deviations: ", my_std, "\n", "Pandas std deviations: ", returns.std().values)
 
+## Pandas volatility function
+volatility = returns.std()
+
+# Rolling average of returns
+roll = returns.rolling(window=2).mean()
+print(roll)
+## Manual rolling average of returns
+rolling_avg = []
+roll_1 = returns.iloc[0, 0]
+roll_2 = returns.iloc[1, 0]
+rolling_avg.append((roll_1 + roll_2) / 2)
+print("Rolling average: ", rolling_avg)
+roll_3 = returns.iloc[2, 0]
+print("Rolling average: ", round((roll_2 + roll_3) / 2, 6))
