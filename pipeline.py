@@ -1,9 +1,14 @@
 from flask import Flask, jsonify, request
 from price_features import SECTORS, build_features_df, compute_returns, compute_rolling_average, download_data
 from model import run_kmeans
-
+try:
+    from flask_cors import CORS
+    print("flask_cors imported successfully.")
+except ImportError:
+    print("Failed to import flask_cors. Please ensure it is installed.")
 
 app = Flask(__name__)
+CORS(app)
 
 # @app.route("/api/clustered-stocks", methods=["POST"])
 def run_pipeline():

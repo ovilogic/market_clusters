@@ -13,20 +13,30 @@ SECTORS = {
         "name": "Tech",
         "tickers": [
             "AAPL", "MSFT", "GOOGL", "AMZN", "META",
-            "TSLA", "NVDA", "JPM", "V", "UNH",
-            "HD", "PG", "DIS", "BAC", "XOM",
-            "KO", "PEP", "INTC", "CSCO", "ORCL"
+            "NVDA", "TSLA", "ORCL", "CRM", "ADBE",
+            "INTC", "AMD", "AVGO", "QCOM", "TXN",
+            "MU", "ASML", "NOW", "PANW", "SNOW"
             ]
             },
     "2": {
         "name": "Defence",
-        "tickers": ["LMT", "RTX", "NOC", "BA"]
-    },
+        "tickers": [
+            "LMT", "RTX", "NOC", "GD", "LHX",
+            "TXT", "HII", "BA.L", "RHM.DE", "HO.PA",
+            "AIR.PA", "SAAB-B.ST", "MTX.DE", "SAF.PA", "EN.PA",
+            "PLTR", "KTOS", "AVAV", "CACI"
+            ]
+            },
     "3": {
         "name": "Energy",
-        "tickers": ["XOM", "CVX", "BP", "SHEL"]
+        "tickers": [
+            "XOM", "CVX", "SHEL", "BP", "TTE", "EQNR",
+            "KMI", "WMB", "OKE", "ENB", "TRP", "MPLX",
+            "SLB", "HAL", "BKR", "NEE", "ENPH", "FSLR", "ORSTED.CO"
+        ]
     }
-}
+    }
+
 
 TICKERS = [
     "AAPL", "MSFT", "GOOGL", "AMZN", "META",
