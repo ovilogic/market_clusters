@@ -10,5 +10,7 @@ def run_kmeans(features_df, k=3):
 
     result = features_df.copy()
     result["cluster"] = clusters
+
     return result, model, scaler
+
 

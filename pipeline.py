@@ -10,10 +10,20 @@ except ImportError:
 app = Flask(__name__)
 CORS(app)
 
-# @app.route("/api/clustered-stocks", methods=["POST"])
+@app.route("/api/clustered-stocks", methods=["POST"])
 def run_pipeline():
-    # sector_id = request.json.get("sector")
-    sector_id = "1" # For testing purposes, we can hardcode the sector_id to "1" (Tech)
+    input_data = request.get_json()
+
+    print("=== Incoming request payload ===")
+    print(input_data)
+
+    sector_id = input_data.get("sector")
+    end_year = input_data.get("year")
+
+    print("Sector ID:", sector_id)
+    print("End Year:", end_year)
+
+    # sector_id = "3" # For testing purposes, we can hardcode the sector_id to "1" (Tech)
     if sector_id not in SECTORS:
         return jsonify({"error": "Invalid sector"}), 400
     
@@ -23,14 +33,23 @@ def run_pipeline():
     data = download_data(tickers)
     returns_df = compute_returns(data)
     rolling_avg_df = compute_rolling_average(returns_df)
-    features_df = build_features_df(data)
+    features_df = build_features_df(data).dropna()
     clustered_df, model, scaler = run_kmeans(features_df)
     # Export to csv
-    clustered_df.to_csv("clustered_stocks.csv", index=True)
-    rolling_avg_df.to_csv("rolling_avg_stocks.csv", index=True)
-    return clustered_df
+    # clustered_df.to_csv("clustered_stocks.csv", index=True)
+    # rolling_avg_df.to_csv("rolling_avg_stocks.csv", index=True)
+    
+    clustered_df = clustered_df.round(6) # Round the values to 6 decimal places for better readability
+    company_map = SECTORS[sector_id]["companies"]
+    clustered_df["company"] = clustered_df.index.map(company_map)
+   
+    return jsonify({
+    "sector": selected_sector["name"],
+    "year": end_year,
+    "clusters": clustered_df.to_dict(orient="index")
+    })
 
 if __name__ == "__main__":
-    clustered_stocks = run_pipeline()
-    print(clustered_stocks)
-    
+    # run_pipeline()
+    app.run(debug=True)
+   
