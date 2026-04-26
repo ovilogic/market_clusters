@@ -102,7 +102,7 @@ SECTORS = {
 }
 
 # Clean data downloader function
-def download_data(tickers, start="2020-01-01", end=None):
+def download_data(tickers, start="2020-09-16", end=None):
     data = yf.download(tickers=tickers, start=start, end=end, auto_adjust=False)
     data = data["Adj Close"].dropna()
     if isinstance(data, pd.Series):

@@ -31,19 +31,13 @@ def run_pipeline():
     selected_sector = SECTORS[sector_id]
     tickers = selected_sector["tickers"]
 
-    data = download_data(tickers)
-    returns_df = compute_returns(data)
-    # print(returns_df.head())  # Debug: Print the first few rows of the returns DataFrame
-
-    rolling_avg_df = compute_rolling_average(returns_df)
+    data = download_data(tickers)  # Ensure that we don't drop rows with NaN values during download
+    # print(data.head())  # Debug: Print the first few rows of the downloaded price data
     features_df = build_features_df(data).dropna()
-    print(features_df.head())  # Debug: Print the first few rows of the features DataFrame
+    # print(features_df.head())  # Debug: Print the first few rows of the features DataFrame
     # This is where we have the features ready for clustering. We can now run KMeans on this DataFrame.
 
     clustered_df, model, scaler = run_kmeans(features_df)
-    # Export to csv
-    # clustered_df.to_csv("clustered_stocks.csv", index=True)
-    # rolling_avg_df.to_csv("rolling_avg_stocks.csv", index=True)
 
     # print(clustered_df['cluster'])  # Debug: Print the count of stocks in each cluster
     # print(clustered_df.info())
@@ -51,17 +45,27 @@ def run_pipeline():
     company_map = SECTORS[sector_id]["companies"]
     clustered_df["company"] = clustered_df.index.map(company_map)
 
-    print(clustered_df.head())  # Debug: Print the first few rows of the clustered DataFrame with company names
+    # print(clustered_df.head())  # Debug: Print the first few rows of the clustered DataFrame with company names
     avg_ret_clustered = clustered_df.groupby("cluster")["average_returns"].mean()
     vol_clustered = clustered_df.groupby("cluster")["volatility"].mean()
     max_dd_clustered = clustered_df.groupby("cluster")["max_drawdown"].mean()
+    # Rolling average by cluster
+    returns = compute_returns(data)
+    rolling_avg = compute_rolling_average(returns).dropna()
+    cluster_labels = clustered_df["cluster"]
+    rolling_avg_transposed = rolling_avg.T
+    rolling_avg_clustered = rolling_avg_transposed.groupby(cluster_labels).mean()
+    print("Rolling Average Clustered:")
+    print(rolling_avg_clustered.head())
 
-    print("Average Returns by Cluster:")
-    print(avg_ret_clustered)
-    print("Volatility by Cluster:")
-    print(vol_clustered)
-    print("Max Drawdown by Cluster:")
-    print(max_dd_clustered)
+
+
+    # print("Average Returns by Cluster:")
+    # print(avg_ret_clustered)
+    # print("Volatility by Cluster:")
+    # print(vol_clustered)
+    # print("Max Drawdown by Cluster:")
+    # print(max_dd_clustered)
 
     # # Manual clustering and calculations on clusters:
     # clusters = {
@@ -79,8 +83,10 @@ def run_pipeline():
 
     # for k, v in clusters.items():
     #     print(f"Cluster {k}: {round(sum([clustered_df.loc[i, 'average_returns'] for i in v])/ len(v), 6)}")
-
-
+    
+     # Export to csv
+    # clustered_df.to_csv("clustered_stocks.csv", index=True)
+    # rolling_avg_df.to_csv("rolling_avg_stocks.csv", index=True)
     return clustered_df.to_dict(orient="index")
     # return jsonify({
     # "sector": selected_sector["name"],
